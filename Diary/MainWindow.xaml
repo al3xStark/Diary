@@ -1,0 +1,148 @@
+﻿<Window x:Class="Diary.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:local="clr-namespace:Diary"
+        mc:Ignorable="d"
+        Title="Diary" Height="447" Width="750" MinHeight="447" MinWidth="750" Loaded="Window_Loaded"
+        WindowStartupLocation="CenterScreen" Closing="Window_Closing">
+    <Grid x:Name="grid" SizeChanged="Grid_SizeChanged">
+        <Grid.Resources>
+            <DataTemplate x:Key="TimePickerTemplate">
+                <materialDesign:TimePicker SelectedTime="{Binding Path= ExecuteTime, UpdateSourceTrigger=PropertyChanged}" Is24Hours="True"/>
+            </DataTemplate>
+        </Grid.Resources>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FFFAFAFA" Offset="0"/>
+                <GradientStop Color="#FF673AB7" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Grid HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="0" x:Name="mainGrid"/>
+            </Grid.ColumnDefinitions>
+            <Border x:Name="panel" 
+                    CornerRadius="10" 
+                    Background="#FFF1F1F1" 
+                    Margin="25 20 25 30" 
+                    MaxWidth="710"
+                    Grid.Column="0">
+                <StackPanel Orientation="Vertical" 
+                            Margin="0 10 0 0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        
+                        <Button x:Name="dateButton" 
+                            Background="#FF673AB7"
+                            HorizontalAlignment="Left"
+                            Foreground="White" 
+                            BorderBrush="{x:Null}" 
+                            Padding="0"
+                            Margin="20 0 0 0"
+                            Click="DateButton_Click" Grid.Column="0" >
+                            <DockPanel>
+                                <TextBlock x:Name="buttonDay" DockPanel.Dock="Top" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="buttonMonth" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Margin="0 0 0 5"/>
+                            </DockPanel>
+                        </Button>
+                        
+                        <Grid Grid.Column="1" Margin="10 10 20 0" MinWidth="100">
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="2*"></RowDefinition>
+                                <RowDefinition Height="1*"></RowDefinition>
+                                <RowDefinition Height="2*"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <ProgressBar x:Name="taskProgress" Minimum="0" Maximum="100" Value="50" Height="10" Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="2" Margin="0 0 0 10"/>
+                            <Button x:Name="clearButton" Grid.Column="0" 
+                                    Grid.Row="2" 
+                                    Margin="0" 
+                                    MaxWidth="200" 
+                                    Background="White"
+                                    Foreground="#FF673AB7" BorderBrush="{x:Null}" Click="ClearButton_Click">Clear</Button>
+                            <Button x:Name="deleteButton" Grid.Column="1"
+                                    Grid.Row="2" 
+                                    Margin="10 0 0 0"
+                                    MaxWidth="200" 
+                                    Background="White" 
+                                    Foreground="#FF673AB7" BorderBrush="{x:Null}" Click="DeleteButton_Click">Delete</Button>
+                            <Button x:Name="saveButton" Grid.Column="2"
+                                    Grid.Row="1"
+                                    Margin="10 0 0 10"
+                                    Background="White"
+                                    Foreground="#FF673AB7" BorderBrush="{x:Null}" Click="SaveButton_Click">Save</Button>
+                            <Button x:Name="addButton" Grid.Column="2"
+                                    Grid.Row="2"
+                                    Margin="10 0 0 0"
+                                    Background="White"
+                                    Foreground="#FF673AB7" BorderBrush="{x:Null}" Click="AddButton_Click">Add</Button>
+                        </Grid>
+                    </Grid>
+                    <Grid Margin="20 20 20 0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50"></ColumnDefinition>
+                            <ColumnDefinition Width="100"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="75"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="importentSortButton" Grid.Column="0" BorderBrush="{x:Null}" Click="ImportentSortButton_Click">★</Button>
+                        <Button x:Name="timeSortButton" Grid.Column="1" BorderBrush="{x:Null}" Click="TimeSortButton_Click">Time</Button>
+                        <Button x:Name="nameSortButton" Grid.Column="2" BorderBrush="{x:Null}" Click="NameSortButton_Click">Name</Button>
+                        <Button x:Name="doneSortButton" Grid.Column="3" BorderBrush="{x:Null}" Click="DoneSortButton_Click">Done</Button>
+                    </Grid>
+                    <DataGrid x:Name="dgDiary"                              
+                                FontSize="16" 
+                                FontWeight="Bold" 
+                                AutoGenerateColumns="False"
+                                HorizontalScrollBarVisibility="Disabled"
+                                Margin="20 0 20 10"
+                                VerticalScrollBarVisibility="Hidden"
+                                CanUserSortColumns="True" HeadersVisibility="None" >                        
+
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Binding="{Binding Path=IsImportent, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="False" Width="50"/>
+                            <DataGridTemplateColumn CellTemplate="{StaticResource TimePickerTemplate}" Width="100"/>
+                            <materialDesign:DataGridTextColumn Binding="{Binding Path=Name}" IsReadOnly="False" Width="*"/>
+                            <DataGridCheckBoxColumn Binding="{Binding Path=IsDone, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="False" Width="75"/>
+                        </DataGrid.Columns>
+
+                        <DataGrid.RowDetailsTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="50" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Text="{Binding Path=Text, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Center" Grid.Column="0"/>
+                                    <Button x:Name="closeTooltip" Grid.Column="1" Click="CloseTooltip_Click" Content="^"/>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGrid.RowDetailsTemplate>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+            <Calendar x:Name="dateCalendar" 
+                      Width="250" 
+                      Height="360"
+                      VerticalAlignment="Center" 
+                      Margin="0 0 25 0" 
+                      SelectedDatesChanged="DateCalendar_SelectedDatesChanged" 
+                      Visibility="Collapsed" Grid.Column="1" PreviewMouseUp="DateCalendar_PreviewMouseUp"/>
+        </Grid>
+    </Grid>
+</Window>
